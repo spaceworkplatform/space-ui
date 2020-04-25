@@ -4,7 +4,7 @@ module.exports = {
 	themeConfig: {
 		nav: [
 			{ text: 'Home', link: '/' },
-			{ text: 'Github', link: 'https://github.com/alfonsobries/vue-tailwind' }
+			{ text: 'Github', link: 'https://github.com/spaceworkplatform/space-ui' }
 		],
 		sidebar: [
 			'/',
