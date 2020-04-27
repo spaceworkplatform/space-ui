@@ -1,5 +1,6 @@
 export default {
-	baseClass: 'inline-flex items-center justify-center outline-none focus:outline-none relative',
+	baseClass: '',
+	floatingClass: 'absolute top-0 right-0 -mt-4 -mr-4',
 	disabledClass: 'cursor-not-allowed opacity-75',
 	xsSizeClass: 'px-2 py-2 text-xs',
 	smSizeClass: 'px-4 py-2 text-sm',

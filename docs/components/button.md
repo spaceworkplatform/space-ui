@@ -27,19 +27,14 @@ This button is compatible with `vue-router`, you just need to define the `to` pr
 
 ## Props
 
-| Property    | Type        | Default value | Accepted values |
-|---          |---          |---      |--- |
-| id          | String      | null      | _Any valid type_ |
-| autofocus   | Boolean     | false     | _Any valid type_ |
-| disabled    | Boolean     | false     | _Any valid type_ |
-| name        | String      | null      | _Any valid type_ |
-| tabindex    | String / Number | null      | _Any valid type_ |
-| value       | String / Number | null      | _Any valid type_ |
-| type        | String      | 'button'      | _Any valid type_ |
-| variant        | String      | undefined      | 'primary', 'secondary', 'tertiary', 'danger', 'warning', 'success' |
-| size        | String      | undefined      | 'sm', 'lg' |
-| href        | String      | null      | _Any valid type_ |
-| tagName+        | String      | 'button'      | 'button', 'a' |
+| Name | Type | Default | Accepted Values |
+|--|--|--|--|
+| rounded | boolean | false | true, false |
+| size | string | md | xs, sm, md, lg, xl |
+| color | string | white | any |
+| text-color | string | black | any |
+| outline | boolean | false | true, false
+| label | string | any | any |
 
 *Note:* when the `href` is set it changes the tagname to `a`
 

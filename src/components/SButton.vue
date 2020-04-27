@@ -1,21 +1,18 @@
 <script>
 import selfInstall from "../utils/selfInstall";
+import getCurrentClass from "../utils/getCurrentClass";
+import getDarkerColorClass from "../utils/getDarkerColorClass";
 import SButtonTheme from "../themes/default/SButton";
 import commonAttributes from "../mixins/commonAttributes";
+import STooltip from "./STooltip.vue";
 
 const {
 	baseClass,
-	defaultClass,
-	primaryClass,
-	secondaryClass,
-	tertiaryClass,
-	successClass,
-	dangerClass,
-	warningClass,
 	disabledClass,
+	xsSizeClass,
+	smSizeClass,
 	defaultSizeClass,
-	largeSizeClass,
-	smallSizeClass
+	lgSizeClass
 } = SButtonTheme;
 
 export default {
@@ -24,12 +21,15 @@ export default {
 		selfInstall(Vue, theme, this);
 	},
 	mixins: [commonAttributes],
+	components: {
+		STooltip
+	},
 	props: {
 		tagName: {
 			type: String,
 			default: "button",
-			validator: function(value) {
-				return ["button", "a"].indexOf(value) !== -1;
+			validator(value) {
+				return ["button", "a"].includes(value);
 			}
 		},
 		value: {
@@ -40,32 +40,45 @@ export default {
 			type: String,
 			default: "button"
 		},
+		label: {
+			type: String,
+			default: null
+		},
 		href: {
 			type: String,
 			default: null
 		},
-		variant: {
+		color: {
 			type: String,
-			default: null,
-			validator: function(value) {
-				return (
-					value === null ||
-					[
-						"primary",
-						"secondary",
-						"tertiary",
-						"danger",
-						"warning",
-						"success"
-					].indexOf(value) !== -1
-				);
-			}
+			default: "white"
+		},
+		textColor: {
+			type: String,
+			default: "black"
+		},
+		tooltip: {
+			type: [String, Boolean],
+			default: null
+		},
+		rounded: {
+			type: [Boolean, String],
+			default: true
+		},
+		elevated: {
+			type: [Boolean, String],
+			default: false
+		},
+		outline: {
+			type: Boolean,
+			default: false
 		},
 		size: {
 			type: String,
 			default: null,
-			validator: function(value) {
-				return value === null || ["lg", "sm"].indexOf(value) !== -1;
+			validator(value) {
+				return (
+					value === null || ["xs", "sm", "md", "lg"].includes(value)
+				);
 			}
 		},
 		method: {
@@ -112,98 +125,30 @@ export default {
 			type: [String, Object, Array],
 			default: baseClass
 		},
-		defaultClass: {
-			type: [String, Object, Array],
-			default: defaultClass
-		},
-		primaryClass: {
-			type: [String, Object, Array],
-			default: primaryClass
-		},
-		secondaryClass: {
-			type: [String, Object, Array],
-			default: secondaryClass
-		},
-		tertiaryClass: {
-			type: [String, Object, Array],
-			default: tertiaryClass
-		},
-		successClass: {
-			type: [String, Object, Array],
-			default: successClass
-		},
-		dangerClass: {
-			type: [String, Object, Array],
-			default: dangerClass
-		},
-		warningClass: {
-			type: [String, Object, Array],
-			default: warningClass
-		},
 		disabledClass: {
 			type: [String, Object, Array],
 			default: disabledClass
+		},
+		xsSizeClass: {
+			type: [String, Object, Array],
+			default: xsSizeClass
+		},
+		smSizeClass: {
+			type: [String, Object, Array],
+			default: smSizeClass
 		},
 		defaultSizeClass: {
 			type: [String, Object, Array],
 			default: defaultSizeClass
 		},
-		largeSizeClass: {
+		lgSizeClass: {
 			type: [String, Object, Array],
-			default: largeSizeClass
-		},
-		smallSizeClass: {
-			type: [String, Object, Array],
-			default: smallSizeClass
+			default: lgSizeClass
 		}
 	},
 	computed: {
-		/**
-		 * The default classes for the button
-		 *
-		 * @return {Array}
-		 */
 		currentClass() {
-			let classes = [
-				`${this.$options._componentTag}`,
-				`${this.$options._componentTag}-size-${this.size || "default"}`,
-				this.baseClass
-			];
-			if (this.disabled) {
-				classes.push(`${this.$options._componentTag}-disabled`);
-				classes.push(this.disabledClass);
-			}
-			if (this.size === null) {
-				classes.push(this.defaultSizeClass);
-			} else if (this.size === "sm") {
-				classes.push(this.smallSizeClass);
-			} else if (this.size === "lg") {
-				classes.push(this.largeSizeClass);
-			}
-			switch (this.variant) {
-				case "primary":
-					classes.push(this.primaryClass);
-					break;
-				case "secondary":
-					classes.push(this.secondaryClass);
-					break;
-				case "tertiary":
-					classes.push(this.tertiaryClass);
-					break;
-				case "danger":
-					classes.push(this.dangerClass);
-					break;
-				case "warning":
-					classes.push(this.warningClass);
-					break;
-				case "success":
-					classes.push(this.successClass);
-					break;
-				default:
-					classes.push(this.defaultClass);
-					break;
-			}
-			return classes;
+			return getCurrentClass(this);
 		},
 		isInertiaLinkComponentAvailable() {
 			return !!this.$options.components.InertiaLink;
@@ -214,30 +159,14 @@ export default {
 				this.$options.components.NuxtLink
 			);
 		},
-		/**
-		 * If we have the `to` defined and the routerLink or Nuxt link component is available we can
-		 * use the create a router link
-		 *
-		 * @return {Boolean}
-		 */
 		isARouterLink() {
 			return this.to !== undefined && this.isRouterLinkComponentAvailable;
 		},
-		/**
-		 * If we have the `href` defined and the InertiaLink component is available we can
-		 * use to create an interia link
-		 *
-		 * @return {Boolean}
-		 */
 		isAnIntertiaLink() {
 			return (
 				this.href !== undefined && this.isInertiaLinkComponentAvailable
 			);
 		},
-		/**
-		 * The component to render according to the props
-		 * @return {String}
-		 */
 		componentToRender() {
 			if (this.isARouterLink) {
 				return (
@@ -245,12 +174,15 @@ export default {
 					this.$options.components.RouterLink
 				);
 			}
+
 			if (this.isAnIntertiaLink) {
 				return this.$options.components.InertiaLink;
 			}
+
 			if (this.href) {
 				return "a";
 			}
+
 			return this.tagName;
 		}
 	},
@@ -270,10 +202,6 @@ export default {
 		focus() {
 			this.$el.focus();
 		},
-		/**
-		 * Attrs according to the button type
-		 * @return {Object}
-		 */
 		getAttributes() {
 			if (this.isAnIntertiaLink) {
 				return {
@@ -319,7 +247,7 @@ export default {
 			};
 		}
 	},
-	render: function(createElement) {
+	render(createElement) {
 		return createElement(
 			this.componentToRender,
 			{
@@ -331,7 +259,16 @@ export default {
 					blur: this.onBlur
 				}
 			},
-			this.$slots.default
+			[
+				this.$slots.default || this.label,
+				this.tooltip != null
+					? createElement("s-tooltip", {
+						props: {
+							label: this.tooltip
+						}
+					  }, this.$slots.tooltip || this.tooltip)
+					: null
+			]
 		);
 	}
 };

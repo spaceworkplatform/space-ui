@@ -1,11 +1,14 @@
 import SButton from './default/SButton'
+import SButton from './default/SBadge'
 
 const DefaultTheme = {
-	SButton
+	SButton,
+	SBadge
 }
 
 export {
-	SButton
+	SButton,
+	SBadge
 }
 
 export default DefaultTheme
